@@ -33,12 +33,14 @@ namespace BlazorDemo
             services.AddServerSideBlazor();
 
             services.AddHealthChecks()
-                .AddCheck("Foo Service", () =>
-                    HealthCheckResult.Degraded("The check of the foo service did not work well."))
-                .AddCheck("Bar Service", () =>
-                    HealthCheckResult.Healthy("The check of the bar service worked."))
+                .AddCheck("Foo Service", () => 
+                {
+                    return HealthCheckResult.Healthy("The check of the foo service did not work well.");
+                }, new[] {"service"}
+                ).AddCheck("Bar Service", () =>
+                    HealthCheckResult.Healthy("The check of the bar service worked."), new[] { "service" })
                 .AddCheck("Database", () =>
-                    HealthCheckResult.Healthy("The check of the database worked."));
+                    HealthCheckResult.Degraded("The check of the database worked."), new[] { "database", "sql" });
 
 
             services.AddSingleton<WeatherForecastService>();
@@ -68,6 +70,11 @@ namespace BlazorDemo
                 endpoints.MapHealthChecks("/quickhealth", new HealthCheckOptions() 
                 { 
                     Predicate = _ => false
+                });
+                endpoints.MapHealthChecks("/health/services", new HealthCheckOptions() 
+                {
+                    Predicate = reg => reg.Tags.Contains("service"),
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
                 });
                 endpoints.MapHealthChecks("/health", new HealthCheckOptions() 
                 {
