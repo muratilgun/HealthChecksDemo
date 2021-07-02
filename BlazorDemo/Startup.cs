@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using HealthChecks.UI.Client;
+using BlazorDemo.HealthCecks;
 
 namespace BlazorDemo
 {
@@ -33,14 +34,16 @@ namespace BlazorDemo
             services.AddServerSideBlazor();
 
             services.AddHealthChecks()
-                .AddCheck("Foo Service", () => 
-                {
-                    return HealthCheckResult.Degraded("The check of the foo service did not work well.");
-                }, new[] {"service"}).AddCheck("Bar Service", () =>
-                    HealthCheckResult.Healthy("The check of the bar service worked."), new[] { "service" })
+                //.AddCheck("Foo Service", () => 
+                //{
+                //    return HealthCheckResult.Degraded("The check of the foo service did not work well.");
+                //}, new[] {"service"})
+                //.AddCheck("Bar Service", () =>
+                //    HealthCheckResult.Healthy("The check of the bar service worked."), new[] { "service" })
+                .AddCheck<ResponseTimeHealthCheck>("Network speed test", null, new[] {"service"})
                 .AddCheck("Database", () =>
                     HealthCheckResult.Healthy("The check of the database worked."), new[] { "database", "sql" });
-
+            services.AddSingleton<ResponseTimeHealthCheck>();
 
             services.AddSingleton<WeatherForecastService>();
         }
