@@ -1,20 +1,18 @@
-using BlazorDemo.Data;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using HealthChecks.UI.Client;
 
-namespace BlazorDemo
+namespace MVCDemo
 {
     public class Startup
     {
@@ -26,23 +24,20 @@ namespace BlazorDemo
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
-            services.AddServerSideBlazor();
-
+            services.AddHealthChecksUI()
+     .AddInMemoryStorage(); //nuget: 
+            services.AddControllersWithViews();
             services.AddHealthChecks()
-                .AddCheck("Foo Service", () => 
-                {
-                    return HealthCheckResult.Degraded("The check of the foo service did not work well.");
-                }, new[] {"service"}).AddCheck("Bar Service", () =>
-                    HealthCheckResult.Healthy("The check of the bar service worked."), new[] { "service" })
-                .AddCheck("Database", () =>
-                    HealthCheckResult.Healthy("The check of the database worked."), new[] { "database", "sql" });
+                    .AddCheck("Foo Service", () =>
+                    {
+                        return HealthCheckResult.Degraded("The check of the foo service did not work well.");
+                    }, new[] { "service" }).AddCheck("Bar Service", () =>
+                      HealthCheckResult.Healthy("The check of the bar service worked."), new[] { "service" })
+                    .AddCheck("Database", () =>
+                      HealthCheckResult.Healthy("The check of the database worked."), new[] { "database", "sql" });
 
-
-            services.AddSingleton<WeatherForecastService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,33 +49,37 @@ namespace BlazorDemo
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
 
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHealthChecks("/quickhealth", new HealthCheckOptions() 
-                { 
+                endpoints.MapHealthChecks("/quickhealth", new HealthCheckOptions()
+                {
                     Predicate = _ => false
                 });
-                endpoints.MapHealthChecks("/health/services", new HealthCheckOptions() 
+                endpoints.MapHealthChecks("/health/services", new HealthCheckOptions()
                 {
                     Predicate = reg => reg.Tags.Contains("service"),
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
                 });
-                endpoints.MapHealthChecks("/health", new HealthCheckOptions() 
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions()
                 {
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
                 });
-                endpoints.MapBlazorHub();
-                endpoints.MapFallbackToPage("/_Host");
+
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

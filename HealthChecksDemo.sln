@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorDemo", "BlazorDemo\Bl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthChecker", "HealthChecker\HealthChecker.csproj", "{9E7B93FC-ECBF-4148-B840-E2852A48A1FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCDemo", "MVCDemo\MVCDemo.csproj", "{CE120391-4070-4E72-99FB-F95E4B77075C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{9E7B93FC-ECBF-4148-B840-E2852A48A1FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E7B93FC-ECBF-4148-B840-E2852A48A1FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E7B93FC-ECBF-4148-B840-E2852A48A1FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE120391-4070-4E72-99FB-F95E4B77075C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE120391-4070-4E72-99FB-F95E4B77075C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE120391-4070-4E72-99FB-F95E4B77075C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE120391-4070-4E72-99FB-F95E4B77075C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
