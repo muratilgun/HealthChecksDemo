@@ -65,6 +65,10 @@ namespace BlazorDemo
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/quickhealth", new HealthCheckOptions() 
+                { 
+                    Predicate = _ => false
+                });
                 endpoints.MapHealthChecks("/health", new HealthCheckOptions() 
                 {
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
