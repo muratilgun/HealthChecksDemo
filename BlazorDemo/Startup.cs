@@ -35,12 +35,12 @@ namespace BlazorDemo
             services.AddHealthChecks()
                 .AddCheck("Foo Service", () => 
                 {
-                    return HealthCheckResult.Healthy("The check of the foo service did not work well.");
+                    return HealthCheckResult.Degraded("The check of the foo service did not work well.");
                 }, new[] {"service"}
                 ).AddCheck("Bar Service", () =>
                     HealthCheckResult.Healthy("The check of the bar service worked."), new[] { "service" })
                 .AddCheck("Database", () =>
-                    HealthCheckResult.Degraded("The check of the database worked."), new[] { "database", "sql" });
+                    HealthCheckResult.Healthy("The check of the database worked."), new[] { "database", "sql" });
 
 
             services.AddSingleton<WeatherForecastService>();
