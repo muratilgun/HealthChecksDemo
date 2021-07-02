@@ -10,6 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 namespace BlazorDemo
 {
@@ -28,6 +31,16 @@ namespace BlazorDemo
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+
+            services.AddHealthChecks()
+                .AddCheck("Foo Service", () =>
+                    HealthCheckResult.Degraded("The check of the foo service did not work well."))
+                .AddCheck("Bar Service", () =>
+                    HealthCheckResult.Healthy("The check of the bar service worked."))
+                .AddCheck("Database", () =>
+                    HealthCheckResult.Healthy("The check of the database worked."));
+
+
             services.AddSingleton<WeatherForecastService>();
         }
 
@@ -52,6 +65,10 @@ namespace BlazorDemo
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions() 
+                {
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
